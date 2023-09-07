@@ -28,4 +28,4 @@ To help this search kick out paths that are definitely sub-optimal, this search 
 
 This graph is optimizing a path that ends in the goal, not just a path *to* the goal. This means that the optimal path might pass through the goal node, do a loop, and then return to the goal. Because of this, when a path is found that reaches a goal location, it is not immediately returned, but added to a max heap (separate from the one that drives the search frontier) of found route possibilities. The search continues until no unexplored search path has a better best-case f-score than the best of the found routes. 
 
-Check out [algo_test](algo/algo_test.ipynb) for a view of this stuff in action. 
+Check out [algo_test](astar_algo/algo_test.ipynb) for a view of this stuff in action. 
