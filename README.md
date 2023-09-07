@@ -7,6 +7,16 @@ I did contact Wandrer's legendary Craig about this feature and it sounds like an
 
 ---
 
+Overview of this project:
+
+It's under construction, nothing fancy yet. I've attempted an AStar-based algorithmic solution. Results: I was smart enough to make it work, but not quite smart enough to realize that I was creating a naive solution to what is basically a form of the Traveling Salesman Problem. The complexity was basically exponential over distance when I ran it in a city-block setting, where prospective paths split 3 ways (left, right, or center) every ~110 meters (the length of a city block). That's no fun!
+
+The next solution I'm attempting is based on Ant Colony Optimization, using techniques laid out [here](https://staff.washington.edu/paymana/swarm/stutzle99-eaecs.pdf) and some other fun sources.
+
+If and when I've found an acceptable solution, I plan to add a UI so users can see the generated path and tune some parameters (target length, etc), add an export to Strava function, and bundle it into a mostly-portable executable.
+
+---
+
 ### Brief-ish explanation of the algorithm
 The fancy bit of this system is the graph optimization search (or optimi**s**ation search, since I'm in NZ at the time of writing). This centers around the Exploration Graph.
 
