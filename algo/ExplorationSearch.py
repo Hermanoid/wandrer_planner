@@ -1,6 +1,6 @@
-from ExplorationGraph import ExplorationArc, ExplorationGraph, ExplorationGraphSettings, ExplorationPath
-from MaxHeap import MaxHeap
-from MaxScoreFrontier import MaxScoreFrontier
+from .ExplorationGraph import ExplorationArc, ExplorationGraph, ExplorationGraphSettings, ExplorationPath
+from .MaxHeap import MaxHeap
+from .MaxScoreFrontier import MaxScoreFrontier
 import networkx as nx
 
 def optimal_path_search_internal(graph: ExplorationGraph, frontier: MaxScoreFrontier):

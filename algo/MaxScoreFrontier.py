@@ -1,5 +1,5 @@
-from ExplorationGraph import ExplorationGraph, ExplorationPath
-from MaxHeap import MaxHeap
+from .ExplorationGraph import ExplorationGraph, ExplorationPath
+from .MaxHeap import MaxHeap
 
 
 class MaxScoreFrontier():

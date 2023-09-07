@@ -1,17 +1,15 @@
-
 from collections import namedtuple
-
 from networkx import MultiDiGraph
 import pyproj
 
 
 class ExplorationGraphSettings():
-    def __init__(self, target_length: float, overlength_penalty: float, outregion_penalty: float, start, goal):
+    def __init__(self, target_length: float, overlength_penalty: float, outregion_penalty: float, start_nodes: list[int], goal_nodes: list[int]):
         self.target_length = target_length
         self.overlength_penalty = overlength_penalty
         self.outregion_penalty = outregion_penalty
-        self.start_nodes = start
-        self.goal_nodes = goal
+        self.start_nodes = start_nodes
+        self.goal_nodes = goal_nodes
     
 # class ExplorationNode():
 #     def __init__(self, node: str, traveled: bool, length: float):
@@ -23,11 +21,15 @@ class ExplorationArc(namedtuple("ExplorationArc", ["tail", "head", "key", "attri
     pass
 
 class ExplorationPath():
-    def __init__(self, arcs: list[ExplorationArc], total_length: float, new_length: float, score: float):
+    def __init__(self, arcs: list[ExplorationArc], total_length: float, new_length: float, score: float, node_pairs: set[tuple[int, int]] | None = None):
         self.arcs = arcs
         self.total_length = total_length
         self.new_length = new_length
         self.score = score
+        self.node_pairs = node_pairs or set((arc.tail, arc.head) for arc in arcs)
+
+    def has_traveled_arc(self, arc: ExplorationArc):
+        return (arc.tail, arc.head) in self.node_pairs or (arc.head, arc.tail) in self.node_pairs
     
 class ExplorationGraph():
     """This is a concrete subclass of Graph where vertices and edges
@@ -40,8 +42,8 @@ class ExplorationGraph():
         network_graph - a MultiDiGraph of the network we're exploring. Must include length and traveled edge attributes.
         """
 
-        assert network_graph.has_node(settings.start_nodes), "Start node must be in graph"
-        assert network_graph.has_node(settings.goal_nodes), "Goal node must be in graph"
+        assert all(network_graph.has_node(n) for n in settings.start_nodes), "Start node must be in graph"
+        assert all(network_graph.has_node(n) for n in settings.goal_nodes), "Goal node must be in graph"
         assert settings.target_length > 0, "Target length must be positive"
 
         self.network_graph = network_graph
@@ -72,7 +74,7 @@ class ExplorationGraph():
 
     def starting_nodes(self):
         """Returns a sequence of starting nodes."""
-        return [self.settings.start_nodes]
+        return self.settings.start_nodes
 
     def reached_goal(self, path):
         """Returns true if the given node is a goal node."""
@@ -95,7 +97,8 @@ class ExplorationGraph():
                 path.arcs + [arc], 
                 path.total_length + arc.attributes['length'],
                 path.new_length if arc.attributes["traveled"] else path.new_length + arc.attributes['length'],
-                path.score + self.score_arc(path, arc)) 
+                path.score + self.score_arc(path, arc),
+                path.node_pairs | {(arc.tail, arc.head)}) 
             for arc in arcs]
     
     def score_arc(self, path: ExplorationPath, arc: ExplorationArc):
@@ -111,4 +114,6 @@ class ExplorationGraph():
         overlength_dist = max(length_to_add - remaining_dist, 0)
         overlength_penalty = - (overlength_dist * self.settings.overlength_penalty)
 
-        return overlength_penalty if arc.attributes["traveled"] else scored_dist + overlength_penalty
+        traveled = arc.attributes["traveled"] or path.has_traveled_arc(arc)
+
+        return overlength_penalty if traveled else scored_dist + overlength_penalty
