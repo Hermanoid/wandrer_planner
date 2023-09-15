@@ -5,7 +5,7 @@ import multiprocessing
 from .Ant import Ant, RunResult
 from .ACOSettings import ACOSettings
 
-def run_ant(ant: Ant):
+def run_ant(ant):
     return ant.run()
 
 class AntColony():
@@ -82,7 +82,7 @@ class AntColony():
         # Ah, the joys of sidestepping the GIL... 
         # our dandy graph will be copied to each process, but I'm sure we'll have plenty of memory
         with multiprocessing.Pool() as pool:
-            results = pool.map(run_ant, self.ants)
+            results = pool.map(Ant.run, self.ants)
         # TODO: As usual with parallelism, I need to see if this even helps!
         return results
     
