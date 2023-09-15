@@ -12,6 +12,7 @@ class ACOSettings():
     directional_choosiness: float # Coeff on directional sigmoid... higher = more difference between best and worst direction options
     finish_boost: float # Multiplier for people from Finland (actually how likely the ants are to go to and stop at the goal)
     gohome_boost: float # If the ant is over-distance, coeff for a quadratic boost to go home
+    gohome_start_coeff: float # After what portion of traveled_dist (0.7 = 70%) should the gohome_boost start to be applied
 
     start_node: int
     goal_nodes: list[int]
